@@ -1,0 +1,19 @@
+{
+  "name": "uml",
+  "version": "0.0.0",
+  "authors": [
+    "Jeffrey van Hoven <wolferine@live.se>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "font-awesome": "~4.3.0"
+  }
+}
