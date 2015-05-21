@@ -48,28 +48,48 @@ header{
 		top: 0;
 		width: 100%;
 		height: 100%;
-		padding-top: 120px;
+		padding-top: 90px;
 		
 		-webkit-box-shadow: 2px 0px 10px -3px #aeaeae;
 		-moz-box-shadow:   	2px 0px 10px -3px #aeaeae;
 		box-shadow:        	2px 0px 10px -3px #aeaeae;
 	}
 	
-		#sidebar nav ul > li a{
+		#sidebar nav ul {
+			list-style: none;
+		}
+	
+		#sidebar nav li.header{
+			color: #616161;
+			font-family: 'Segoe UI';
+			font-weight: bold;
+			font-size: 11px;
+			text-transform: uppercase;
+			text-align: left;
+			margin-left: 40px;
+			padding: 15px 0px;
+		}
+	
+		#sidebar nav ul > li a {
+			display: block;
 			width: 100% !important;
 			text-align: left !important;
 			padding: 15px 0px !important;
 		}
 		
-		#sidebar nav ul > li:hover{
+		#sidebar nav ul > li a:hover{
 			background-color: #e5e5e5;
 			cursor: pointer;
 		}
 		
 		#sidebar nav ul li a{
-			color: #78909C !important;
+			font-family: 'Roboto' sans-serif;
+			font-size: 15px;
+			font-weight: 300;
+			color: #616161 !important;
+			text-decoration: none;
 		}
 		
 		#sidebar nav ul li a i {
-			margin: 0px 20px;
+			margin: 0px 40px;
 		}
