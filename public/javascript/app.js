@@ -8,6 +8,8 @@ var App = (function() {
 		init: function() {
 			canvas = document.getElementById("drawable");
 			context = canvas.getContext("2d");
+			
+			// We need the menu for interactions
 			menu = new Menu();
 			menu.init();
 			
@@ -45,12 +47,10 @@ var App = (function() {
 				
 				switch(element.getAttribute("data-val")) {
 					case "class":
-						context.beginPath();
-						context.rect(coords.x - 62.5, coords.y - 40, 125, 80);
-						context.fillStyle = "#26A69A";
-						context.fill();
-						
-						
+						var squircle = Squircle(coords.x, coords.y, 140, 90, "#BDBDBD", 20);
+						squircle.draw(context);
+						menu.deactivate();
+						break;	
 				}
 			}
 		}

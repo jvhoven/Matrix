@@ -95,8 +95,8 @@ header{
 			color: #FFF !important;
 			
 			box-shadow: 
-        inset 0px 11px 8px -10px #64B5F6,
-        inset 0px -11px 8px -10px #64B5F6; 
+        		inset 0px 11px 8px -10px #64B5F6,
+        		inset 0px -11px 8px -10px #64B5F6; 
 		}
 		
 		#sidebar nav ul li a i {

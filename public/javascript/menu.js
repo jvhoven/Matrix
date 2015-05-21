@@ -21,6 +21,10 @@ var Menu = (function() {
 		},
 		getActive: function() {
 			return active;
+		},
+		deactivate: function() {
+			active.className = "";
+			active = null;
 		}
 	};
 });
