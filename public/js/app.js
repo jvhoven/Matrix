@@ -5,6 +5,7 @@ class App {
 	constructor() {	
 		this.canvas = document.getElementById("drawable");
 		this.context = this.canvas.getContext("2d");
+		this.drawnElements = [];
 		
 		// We need the menu for interactions
 		this.menu = new Menu();
@@ -12,13 +13,13 @@ class App {
 		this.canvas.setAttribute("width", canvas.parentElement.clientWidth);
 		this.canvas.setAttribute("height", canvas.parentElement.clientHeight);
 		
-		var self = this;
+		let self = this;
 		this.canvas.addEventListener("click", (event) => self.addElement.call(self, event), false);
 		window.onresize = this.resizeCanvas();
 	}
 	
 	resizeCanvas() {
-		var measures = {
+		let measures = {
 			oldWidth: this.canvas.clientWidth,
 			oldHeight: this.canvas.clientHeight,
 			newWidth: this.canvas.parentElement.clientWidth,
@@ -26,8 +27,8 @@ class App {
 		};
 		
 		// Ratios for context scaling
-		var widthRatio = measures.oldWidth / measures.newWidth;
-		var heightRatio = measures.oldHeight / measures.newHeight;
+		let widthRatio = measures.oldWidth / measures.newWidth;
+		let heightRatio = measures.oldHeight / measures.newHeight;
 		
 		this.canvas.style.width = measures.newWidth;
 		this.canvas.style.height = measures.newHeight;
@@ -35,22 +36,35 @@ class App {
 	}
 	
 	addElement(event) {
-		var element = this.menu.active;
+		let element = this.menu.active;
+		let rect = this.canvas.getBoundingClientRect();
+		let coords = {
+			x: Math.round((event.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width),
+			y: Math.round((event.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height)
+		};
 
-		if(element != null){
-			var coords = {
-				x: event.offsetX,
-				y: event.offsetY
-			};		
-			
-			switch(element.getAttribute("data-val")) {
-				case "class":
-					var squircle = new Squircle(coords.x, coords.y, 140, 90, "#BDBDBD", 20);
-					squircle.draw(this.context);
-					this.menu.deactivate();
+		if(element != null){			
+			let shape = null;
+			switch(element.getAttribute('data-val')) {
+				case 'class':
+					shape = new Squircle(coords.x - (140 / 8), coords.y - (90 / 8), 140, 90, '#BDBDBD', 20);
 					break;	
 			}
+			
+			this.drawnElements.push(shape);
+			shape.draw(this.context);
+			this.menu.deactivate();
+		} else {
+			this.selectElement(coords);
 		}
+	}
+	
+	selectElement(coords) {
+		let selected = this.drawnElements.map((element) => {
+			if(element.intersects(coords.x, coords.y)) {
+				return element;
+			}
+		});
 	}
 }
 
