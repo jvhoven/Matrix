@@ -65,6 +65,22 @@ class App {
 				return element;
 			}
 		});
+		
+		if(selected) {
+			console.log(selected);
+			let el = selected[0];
+			this.context.strokeStyle = "#FFF";
+			this.context.lineWidth = 1;
+			el.draw(this.context, true);
+		}
+		
+		this.redraw();
+	}
+	
+	redraw() {
+		this.context.save();
+		this.context.clearRect(0, 0, canvas.width, canvas.height);
+		this.context.restore();
 	}
 }
 
