@@ -1,87 +1,57 @@
-const Menu = require('./menu');
-const Squircle = require('./shapes/squircle');
 const Debug = require('./debug');
 const PointHelper = require('./helpers/point');
+const Graphics = require('./graphics');
 
 class App {
 	constructor() {	
-		this.canvas = document.getElementById("drawable");
-		this.context = this.canvas.getContext("2d");
-		this.drawnElements = [];
+		// Init canvas
+		let canvas = document.getElementById("drawable");			
+		canvas.setAttribute("width", canvas.parentElement.clientWidth);
+		canvas.setAttribute("height", canvas.parentElement.clientHeight);
 		
-		this.canvas.setAttribute("width", canvas.parentElement.clientWidth);
-		this.canvas.setAttribute("height", canvas.parentElement.clientHeight);
+		// Add graphics
+		this.graphics = new Graphics(canvas);
 		
+		// Register handlers
 		let self = this;
-		this.canvas.addEventListener("click", (event) => self.delegateClickEvent.call(self, event), false);
-		window.onresize = this.resizeCanvas();
+		canvas.addEventListener("click", (event) => self.delegateClickEvent.call(self, event), false);
+		window.onresize = this.resize();
 	}
 	
-	resizeCanvas() {
+	/**
+	 * Resizes the canvas to fix the screen
+	 * 
+	 * TODO: Correctly zoom out
+	 */
+	resize() {
 		let measures = {
-			oldWidth: this.canvas.clientWidth,
-			oldHeight: this.canvas.clientHeight,
-			newWidth: this.canvas.parentElement.clientWidth,
-			newHeight: this.canvas.parentElement.clientHeight,
+			oldWidth: this.graphics.canvas.clientWidth,
+			oldHeight: this.graphics.canvas.clientHeight,
+			newWidth: this.graphics.canvas.parentElement.clientWidth,
+			newHeight: this.graphics.canvas.parentElement.clientHeight,
 		};
 		
 		// Ratios for context scaling
 		let widthRatio = measures.oldWidth / measures.newWidth;
 		let heightRatio = measures.oldHeight / measures.newHeight;
 		
-		this.canvas.style.width = measures.newWidth;
-		this.canvas.style.height = measures.newHeight;
-		this.context.scale(widthRatio, heightRatio);
+		this.graphics.canvas.style.width = measures.newWidth;
+		this.graphics.canvas.style.height = measures.newHeight;
+		this.graphics.context.scale(widthRatio, heightRatio);
 	}
 	
+	/**
+	 * Delegates the click event to the graphics module
+	 * @param {event} The click event
+	 */
 	delegateClickEvent(event) {
-		event.coords = PointHelper.normalize(this.canvas, event.clientX, event.clientY);
+		event.coords = PointHelper.normalize(this.graphics.canvas, event.clientX, event.clientY);
 		
-		if(Menu.active) {
-			this.addElement(event);
+		if(this.graphics.menu.active) {
+			this.graphics.addPolygon(event);
 		} else {
-			this.selectElement(event);
+			this.graphics.selectPolygon(event);
 		}
-	}
-	
-	addElement(event) {
-		let element = Menu.active;
-		
-		if(element != null){			
-			let shape = null;
-			switch(element.getAttribute('data-val')) {
-				case 'class':
-					shape = new Squircle(event.coords.x, event.coords.y, 140, 90, '#BDBDBD', 20);
-					break;	
-			}
-			
-			this.drawnElements.push(shape);
-			shape.draw(this.context);			
-			Menu.deactivate();
-		}
-	}
-	
-	selectElement(event) {
-		let selectedElement = null;
-		//console.log(this.drawnElements);
-		
-		this.drawnElements.map((element) => {
-			if(element.intersects(event.coords.x, event.coords.y)) {
-				//console.log(element);
-				selectedElement = element;
-			}
-		});
-		
-		if(selectedElement != null) {
-			selectedElement.onSelect(this.context);
-			this.redraw();	
-		}
-	}
-	
-	redraw() {
-		this.context.save();
-		this.context.clearRect(0, 0, canvas.width, canvas.height);
-		this.context.restore();
 	}
 }
 

@@ -1,4 +1,10 @@
 class PointHelper {
+    /**
+     * Normalize the coordinates relative to the canvas
+     * @param {canvas} The canvas in use
+     * @param {x} The x coordinate
+     * @param {y} the y coordinate
+     */
     normalize(canvas, x, y) {
         let rect = canvas.getBoundingClientRect();
         let point = {

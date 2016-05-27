@@ -1,4 +1,4 @@
-class Shape {
+class Polygon {
 	constructor(x, y, width, height, color) {
 		this.x = x;
 		this.y = y;
@@ -57,4 +57,4 @@ class Shape {
 	}
 }
 
-module.exports = Shape;
+module.exports = Polygon;
