@@ -1,5 +1,5 @@
 const Menu = require('./menu');
-const Squircle = require('./shapes/squircle');
+const Squircle = require('./polygons/squircle');
 
 class Graphics {
     constructor(canvas) {
@@ -19,6 +19,15 @@ class Graphics {
 		
 		if(element != null){			
 			let shape = null;
+			
+			// If the space is occupied, place the polygon at the top of the canvas
+			// TODO: Find a better way
+			let occupiedPolygon = this.hasPolygon(event.coords);
+			if(occupiedPolygon != null) {
+				event.coords.x = 0 + occupiedPolygon.width;
+				event.coords.y = 0 + occupiedPolygon.height;
+			}
+			
 			switch(element.getAttribute('data-val')) {
 				case 'class':
 					shape = new Squircle(event.coords.x, event.coords.y, 140, 90, '#BDBDBD', 20);
@@ -31,20 +40,30 @@ class Graphics {
 		}
 	}
 	
+	/**
+	 * Checks if given coordinates are occupied by another polygon
+	 */
+	hasPolygon(coords) {
+		let polygon = null;
+		//console.log(this.drawnElements);
+		
+		this.drawn.map((element) => {
+			if(element.intersects(coords.x, coords.y)) {
+				//console.log(element);
+				polygon = element;
+			}
+		});
+		
+		return polygon;
+	}
+	
     /**
      * Highlights a polygon on the canvas
      * @param {event} The click event
      */
 	selectPolygon(event) {
-		let selectedElement = null;
-		//console.log(this.drawnElements);
 		
-		this.drawn.map((element) => {
-			if(element.intersects(event.coords.x, event.coords.y)) {
-				//console.log(element);
-				selectedElement = element;
-			}
-		});
+		let selectedElement = this.hasPolygon(event.coords);
 		
 		if(selectedElement != null) {
             if(this.selectedPolygon != null && this.selectedPolygon != selectedElement) {
