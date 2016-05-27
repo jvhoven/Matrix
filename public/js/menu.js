@@ -9,6 +9,10 @@ class Menu {
 		};
 	}
 	
+	/**
+	 * Click handler that sets the active menu item and adds the active class for visual effect
+	 * @param {event} The event given by javascript events
+	 */
 	clickHandler(event) {
 		var element = event.srcElement;
 		if(this._active != null) {
@@ -18,19 +22,30 @@ class Menu {
 		this._active = element;
 	}
 	
+	/**
+	 * Returns the active menu DOM object
+	 * @return {_active} DOM object
+	 */
 	get active() {
 		return this._active;
 	}
 	
+	/**
+	 * Sets the active menu DOM object
+	 * @param {act} The to-be active DOM object
+	 */
 	set active(act) {
 		this._active = act;
 	}
 	
+	/**
+	 * Deselects the current active menu item for visual effect
+	 */
 	deactivate() {
 		this.active.className = "";
 		this.active = null;
 	}
 }
 
-module.exports = Menu;
+module.exports = new Menu();
 	

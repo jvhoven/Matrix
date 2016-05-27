@@ -1,5 +1,7 @@
 const Menu = require('./menu');
 const Squircle = require('./shapes/squircle');
+const Debug = require('./debug');
+const PointHelper = require('./helpers/point');
 
 class App {
 	constructor() {	
@@ -7,14 +9,11 @@ class App {
 		this.context = this.canvas.getContext("2d");
 		this.drawnElements = [];
 		
-		// We need the menu for interactions
-		this.menu = new Menu();
-		
 		this.canvas.setAttribute("width", canvas.parentElement.clientWidth);
 		this.canvas.setAttribute("height", canvas.parentElement.clientHeight);
 		
 		let self = this;
-		this.canvas.addEventListener("click", (event) => self.addElement.call(self, event), false);
+		this.canvas.addEventListener("click", (event) => self.delegateClickEvent.call(self, event), false);
 		window.onresize = this.resizeCanvas();
 	}
 	
@@ -35,46 +34,48 @@ class App {
 		this.context.scale(widthRatio, heightRatio);
 	}
 	
+	delegateClickEvent(event) {
+		event.coords = PointHelper.normalize(this.canvas, event.clientX, event.clientY);
+		
+		if(Menu.active) {
+			this.addElement(event);
+		} else {
+			this.selectElement(event);
+		}
+	}
+	
 	addElement(event) {
-		let element = this.menu.active;
-		let rect = this.canvas.getBoundingClientRect();
-		let coords = {
-			x: Math.round((event.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width),
-			y: Math.round((event.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height)
-		};
-
+		let element = Menu.active;
+		
 		if(element != null){			
 			let shape = null;
 			switch(element.getAttribute('data-val')) {
 				case 'class':
-					shape = new Squircle(coords.x - (140 / 8), coords.y - (90 / 8), 140, 90, '#BDBDBD', 20);
+					shape = new Squircle(event.coords.x, event.coords.y, 140, 90, '#BDBDBD', 20);
 					break;	
 			}
 			
 			this.drawnElements.push(shape);
-			shape.draw(this.context);
-			this.menu.deactivate();
-		} else {
-			this.selectElement(coords);
+			shape.draw(this.context);			
+			Menu.deactivate();
 		}
 	}
 	
-	selectElement(coords) {
-		let selected = this.drawnElements.map((element) => {
-			if(element.intersects(coords.x, coords.y)) {
-				return element;
+	selectElement(event) {
+		let selectedElement = null;
+		//console.log(this.drawnElements);
+		
+		this.drawnElements.map((element) => {
+			if(element.intersects(event.coords.x, event.coords.y)) {
+				//console.log(element);
+				selectedElement = element;
 			}
 		});
 		
-		if(selected) {
-			console.log(selected);
-			let el = selected[0];
-			this.context.strokeStyle = "#FFF";
-			this.context.lineWidth = 1;
-			el.draw(this.context, true);
+		if(selectedElement != null) {
+			selectedElement.onSelect(this.context);
+			this.redraw();	
 		}
-		
-		this.redraw();
 	}
 	
 	redraw() {
@@ -84,4 +85,4 @@ class App {
 	}
 }
 
-module.exports = App;
+module.exports = new App();
